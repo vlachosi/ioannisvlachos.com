@@ -1,0 +1,44 @@
+name: Build preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS context (not executed by the build)
+        required: true
+        default: '{}'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install content tools
+        run: python -m pip install -r requirements.txt
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.9.38
+      - name: Validate and render
+        run: |
+          python scripts/prepare-site.py --check
+          python -m unittest discover -s tests -v
+          quarto render --profile drafts --output-dir _site-preview --clean
+          python scripts/check-site.py _site-preview --drafts
+      - name: Save preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: _site-preview
+          retention-days: 7

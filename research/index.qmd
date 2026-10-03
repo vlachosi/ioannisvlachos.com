@@ -3,9 +3,9 @@ title: "Research"
 description: "Papers, work in progress and thesis."
 listing:
   id: papers
-  contents: papers.yml
+  contents: ../_generated/papers.yml
   template: ../templates/papers.ejs
-  sort: false
+  sort: "order"
 ---
 
 ::: {.page-intro}

@@ -3,9 +3,9 @@ title: "Projects"
 description: "Software, replication packages and other things I have built."
 listing:
   id: projects
-  contents: projects.yml
+  contents: ../_generated/projects.yml
   template: ../templates/cards.ejs
-  sort: false
+  sort: "order"
 ---
 
 ::: {#projects}

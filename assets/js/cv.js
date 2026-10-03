@@ -1,19 +1,23 @@
 /*
  * CV viewer. Draws the PDF named in [data-cv-viewer] into the page with
  * PDF.js: one canvas per page, a transparent text layer on top so the text can
- * be selected and searched, and clickable areas for the PDF's links. Until the
- * PDF exists, the page shows its placeholder message instead.
+ * be selected and searched, and clickable areas for the PDF's links. The
+ * build supplies a working download link independently of this preview.
  */
-import * as pdfjsLib from "/assets/vendor/pdfjs/pdf.min.mjs";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = "/assets/vendor/pdfjs/pdf.worker.min.mjs";
-
 const viewer = document.querySelector("[data-cv-viewer]");
-const download = document.querySelector("[data-cv-download]");
-const loading = document.querySelector("[data-cv-loading]");
-const missing = document.querySelector("[data-cv-missing]");
+const status = document.querySelector("[data-cv-status]");
 
-async function drawPage(page, width) {
+function showError(error) {
+  if (viewer) viewer.setAttribute("aria-busy", "false");
+  if (!status) return;
+  const missing = error?.name === "MissingPDFException" || error?.status === 404;
+  status.textContent = missing
+    ? "The CV PDF could not be found. Please try again later."
+    : "The embedded preview is unavailable. You can still download the PDF above.";
+  status.hidden = false;
+}
+
+async function drawPage(pdfjsLib, page, width) {
   const scale = width / page.getViewport({ scale: 1 }).width;
   const viewport = page.getViewport({ scale });
   const ratio = Math.min(window.devicePixelRatio || 1, 3);
@@ -74,44 +78,47 @@ async function drawPage(page, width) {
 
 async function main() {
   if (!viewer) return;
+  viewer.setAttribute("aria-busy", "true");
+  if (status) {
+    status.hidden = false;
+    status.textContent = "Loading CV preview…";
+  }
   const src = new URL(viewer.dataset.cvViewer, window.location.href).href;
 
-  let pdf;
-  try {
-    pdf = await pdfjsLib.getDocument({ url: src }).promise;
-  } catch (error) {
-    if (loading) loading.hidden = true;
-    if (missing) missing.hidden = false;
-    return;
-  }
-
-  if (download) {
-    download.classList.remove("is-disabled");
-    download.removeAttribute("aria-disabled");
-    download.href = src;
-  }
+  // A dynamic import lets the page recover when the renderer itself is blocked
+  // or unsupported. The direct download link never depends on JavaScript.
+  const pdfjsLib = await import("/assets/vendor/pdfjs/pdf.min.mjs");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "/assets/vendor/pdfjs/pdf.worker.min.mjs";
+  const pdf = await pdfjsLib.getDocument({ url: src }).promise;
 
   const pages = [];
   for (let n = 1; n <= pdf.numPages; n++) pages.push(await pdf.getPage(n));
 
   // Redraw at the container's width, and again whenever that width changes.
   let drawnWidth = 0;
+  let drawVersion = 0;
   const draw = async () => {
     const width = Math.floor(viewer.clientWidth);
     if (!width || width === drawnWidth) return;
     drawnWidth = width;
+    const version = ++drawVersion;
     const drawn = [];
-    for (const page of pages) drawn.push(await drawPage(page, width));
-    if (width === drawnWidth) viewer.replaceChildren(...drawn);
+    for (const page of pages) {
+      drawn.push(await drawPage(pdfjsLib, page, width));
+      if (version !== drawVersion) return;
+    }
+    viewer.replaceChildren(...drawn);
+    viewer.dataset.ready = "true";
+    viewer.setAttribute("aria-busy", "false");
+    if (status) status.hidden = true;
   };
   await draw();
-  viewer.dataset.ready = "true";
 
   let timer = 0;
   new ResizeObserver(() => {
     clearTimeout(timer);
-    timer = setTimeout(draw, 150);
+    timer = setTimeout(() => draw().catch(showError), 150);
   }).observe(viewer);
 }
 
-main();
+main().catch(showError);

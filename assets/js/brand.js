@@ -9,6 +9,8 @@
 
   const brand = document.querySelector(".navbar-brand");
   if (!brand) return;
+  const title = brand.querySelector(".navbar-title")?.textContent.trim();
+  if (title && !brand.hasAttribute("aria-label")) brand.setAttribute("aria-label", `${title} — Home`);
 
   const NS = "http://www.w3.org/2000/svg";
   const rand = (lo, hi) => lo + Math.random() * (hi - lo);

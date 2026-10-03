@@ -8,7 +8,8 @@ const kind = templateParams.kind;
 <li class="home-empty"><%- templateParams.empty %></li>
 <% } %>
 <% for (const item of items) {
-  const link = item.href || (kind === "writing" ? item.path : undefined);
+  const primaryLink = (item.links || []).find((link) => link.url);
+  const link = item.href || (kind === "writing" ? item.path : primaryLink && primaryLink.url);
   let meta = "";
   if (kind === "writing") meta = item.date || "";
   else if (kind === "research") meta = [item.year, statusLabel[item.status]].filter(Boolean).join(" · ");

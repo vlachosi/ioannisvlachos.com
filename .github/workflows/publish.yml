@@ -19,12 +19,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install content tools
+        run: python -m pip install -r requirements.txt
+
+      - name: Validate editable content
+        run: |
+          python scripts/prepare-site.py --check
+          python -m unittest discover -s tests -v
+
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: 1.9.38
 
-      - name: Render
-        run: quarto render
+      - name: Build and check draft preview
+        run: |
+          quarto render --profile drafts --output-dir _site-preview --clean
+          python scripts/check-site.py _site-preview --drafts
+
+      - name: Save draft preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: _site-preview
+          retention-days: 7
+
+      - name: Build and check production
+        run: |
+          quarto render --clean
+          python scripts/check-site.py _site
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

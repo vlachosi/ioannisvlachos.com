@@ -1,17 +1,20 @@
 /*
- * Email address, assembled in the browser so it never appears as plain text
- * in the HTML. Fill in both parts to publish it; every [data-email-slot]
- * element then becomes a mailto link. While either part is empty, the slots
- * keep their placeholder content.
+ * Populate public contact links from the generated profile record.
+ * An empty email keeps the existing placeholders visible.
  */
 (function () {
   "use strict";
 
-  const USER = "";
-  const DOMAIN = "";
-
-  if (!USER || !DOMAIN) return;
-  const address = USER + "@" + DOMAIN;
+  const contact = document.getElementById("site-contact");
+  if (!contact) return;
+  let address;
+  try {
+    address = JSON.parse(contact.textContent).email;
+  } catch (_) {
+    return;
+  }
+  if (typeof address !== "string" || !address.trim()) return;
+  address = address.trim();
 
   document.querySelectorAll("[data-email-slot]").forEach((slot) => {
     const link = document.createElement("a");

@@ -1,49 +1,73 @@
 # vlachosi.github.io
 
-My personal academic website, where I put my research, CV, and whatever I am working on. It is built with [Quarto](https://quarto.org) and published at <https://ioannisvlachos.com> by GitHub Actions.
+My academic website, built with Quarto and published at <https://ioannisvlachos.com> through GitHub Pages.
 
-## Working on the site
+## Edit in the browser
 
-Install Quarto 1.9 or later, then from the repository root run:
+[Pages CMS](https://app.pagescms.org) provides the forms defined in [.pages.yml](.pages.yml):
+
+- **Writing:** create posts with a title, summary, date, topics, images, body, and draft switch.
+- **Research and Projects:** manage records, statuses, links, homepage selection, and display order.
+- **Profile and contact:** update the shared biography, role, affiliation, email, links, and optional section visibility.
+- **CV:** upload a PDF, select the current version, and set its updated date.
+- **Build preview:** render saved content with drafts into a downloadable Actions artifact.
+
+The configuration must be committed to the selected GitHub branch, and the Pages CMS GitHub App must be authorized for this repository. Account connection is separate from this code.
+
+**Saving to main can publish changes.** Other branches become live when merged. New posts default to draft; a future date does not schedule publication. See [the editing guide](docs/EDITING.md) and [CMS configuration notes](docs/CMS-CONFIG.md).
+
+## Preview and build locally
+
+Install Quarto **1.9.38** and Python **3.12**, then:
 
 ```sh
-quarto preview                    # live preview, drafts included
-quarto render                     # full build into _site/, drafts excluded
-quarto render --profile drafts    # full build with drafts visible
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+quarto preview --profile drafts
 ```
 
-Everything published comes from `main`. Pushing to `main` runs `.github/workflows/publish.yml`, which renders the site and deploys it to GitHub Pages. Pull requests only render, to check that the build works.
+Quarto validates content and prepares profile/CV inputs automatically before rendering. Generated files are ignored; edit their source records.
+
+```sh
+quarto render --clean
+python scripts/check-site.py _site
+quarto render --profile drafts --output-dir _site-preview --clean
+python scripts/check-site.py _site-preview --drafts
+python -m unittest discover -s tests -v
+```
+
+Production excludes drafts/placeholders. Stop a live preview before building into its output directory.
 
 ## Where to edit
 
-| What | File |
+| Content | Source |
 |---|---|
-| Papers, work in progress, thesis | `research/papers.yml` |
-| Blog posts | `writing/posts/<yyyy-mm-dd-slug>/index.qmd` |
-| Projects and software | `projects/projects.yml` |
-| Talks (hidden) | `talks/talks.yml` |
-| Teaching (hidden) | `teaching/teaching.yml` |
-| CV (PDF shown on the CV page) | `cv/vlachos-cv.pdf` |
-| About page and bio | `about.qmd` |
-| Front page | `index.qmd` |
-| Navigation, footer, site settings | `_quarto.yml` |
-| Colours (light and dark) | `styles/light.scss`, `styles/dark.scss` |
-| Layout and typography (type sizes and spacing are set once at the top) | `styles/common.scss`, `styles/fonts.css` |
-| Front-page dial | `assets/js/dial.js` |
+| Shared profile, bio, email, links, section visibility | [_data/profile.yml](_data/profile.yml) |
+| Blog posts | writing/posts/date-slug/index.qmd |
+| Papers | [research/papers.yml](research/papers.yml) |
+| Projects | [projects/projects.yml](projects/projects.yml) |
+| Talks / Teaching | talks/talks.yml / teaching/teaching.yml |
+| Selected CV and updated date | [_data/cv.yml](_data/cv.yml) |
+| Original uploaded PDFs | _cv-uploads/ |
+| Images and attachments | assets/uploads/ |
+| Page structure and theme | QMD pages, templates/, styles/ |
+| Build/site configuration | [_quarto.yml](_quarto.yml) |
 
-Talks and Teaching are hidden for now: they are left out of the navigation and the build. To bring one back, re-add its entry under `website.navbar.right` in `_quarto.yml` and delete its `"!talks/"` or `"!teaching/"` line under `project.render`.
+Research/projects use **featured** and **order** for homepage placement; lower order appears first. **draft** and **placeholder** records appear only in draft previews. Profile settings enable Talks/Teaching pages and their navigation together.
 
-Entries marked `placeholder: true` in the YAML files are shown with a dashed "placeholder" tag. Replace the text and delete that line once an entry is real. Each YAML file lists the fields it understands at the top.
+Only the selected CV is copied to **cv/vlachos-cv.pdf**. Do not edit that generated file. Clearing the selection restores the empty CV state. Historical uploads remain in Git history; this repository is not private document storage.
 
-To add a post, create a folder under `writing/posts/` with an `index.qmd` holding `title`, `description` and `date` in its front matter. Add `draft: true` to keep it off the live site until it is ready. Posts can contain R or Python code: with `freeze: auto`, results are computed on your machine when you render, and the `_freeze/` folder they produce should be committed so that the build server never runs code.
+## Publication
 
-The front-page dial shows one simulated year, January at the top. Each draw places four earnings releases (one per quarter) and two macro releases at new dates; their names, counts and jump sizes are set at the top of `assets/js/dial.js`.
+Pull requests and main pushes validate content, run tests, and check both build modes. Each build saves a **site-preview** artifact. Only checked production output is deployed, and only from main.
 
-Two small jobs are waiting:
+The separate **Build preview** workflow never deploys. Once its workflow exists on the default branch, run it from Pages CMS or GitHub Actions. The artifact contains drafts and is a download, not a hosted review URL.
 
-- **Email.** Fill in `USER` and `DOMAIN` in `assets/js/email.js`. The address is assembled in the browser, so it never sits in the HTML as plain text.
-- **CV PDF.** Save the compiled PDF as `cv/vlachos-cv.pdf` and push. The CV page draws it in the browser (PDF.js, `assets/js/cv.js`) and enables the download button; until the file exists the page shows a placeholder. To update the CV later, replace the same file.
+## Computational posts
 
-## Credits
+Plain Markdown, mathematics, and displayed code require no R/Jupyter runtime. Executable R/Python articles need pinned language dependencies or appropriately refreshed frozen results. **freeze: auto** can execute changed source during a project render; committing _freeze/ alone does not guarantee code never runs. Establish a suitable CI execution policy before adding computational articles.
 
-Fonts are Petrona, Source Sans 3 and JetBrains Mono, all under the SIL Open Font License (see `assets/fonts/`). Maths is typeset with a self-hosted copy of KaTeX (MIT; see `assets/vendor/katex/`), and the CV is drawn with a self-hosted copy of PDF.js (Apache-2.0; see `assets/vendor/pdfjs/`).
+## Design and credits
+
+The custom theme and figures remain in styles/ and assets/js/. Fonts are Petrona, Source Sans 3, and JetBrains Mono under the SIL Open Font License. Maths uses self-hosted KaTeX (MIT), and the CV viewer uses PDF.js (Apache-2.0); see the bundled licenses. Keep PDF.js main and worker versions together when updating them.

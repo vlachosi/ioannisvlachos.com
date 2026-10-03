@@ -8,6 +8,9 @@ const groups = [
 %>
 ```{=html}
 <div class="list papers">
+<% if (items.length === 0) { %>
+<p class="entry-desc">Research outputs will appear here as they are ready.</p>
+<% } %>
 <% for (const [status, heading] of groups) {
   const group = items.filter((item) => item.status === status);
   if (group.length === 0) continue;
@@ -20,7 +23,7 @@ const groups = [
   <div class="when"><%- item.year || "" %></div>
   <div>
     <h3 class="entry-title"><% if (item.href) { %><a href="<%- item.href %>"><%= item.title %></a><% } else { %><%= item.title %><% } %><% if (item.placeholder) { %><span class="placeholder-tag">placeholder</span><% } %></h3>
-    <% if (item.authors) { %><p class="entry-sub"><%= item.authors %><% if (item.venue) { %> · <span class="venue"><%= item.venue %></span><% } %></p><% } %>
+    <% if (item.authors || item.venue) { %><p class="entry-sub"><% if (item.authors) { %><%= item.authors %><% } %><% if (item.authors && item.venue) { %> · <% } %><% if (item.venue) { %><span class="venue"><%= item.venue %></span><% } %></p><% } %>
     <% if (item.abstract) { %>
     <details>
       <summary>Abstract</summary>

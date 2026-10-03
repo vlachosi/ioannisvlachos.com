@@ -1,5 +1,8 @@
 ```{=html}
 <ul class="cards list">
+<% if (items.length === 0) { %>
+<li class="card"><p class="card-desc">Projects will appear here as they are ready.</p></li>
+<% } %>
 <% for (const item of items) { %>
 <li class="card<%= item.placeholder ? ' is-placeholder' : '' %>" <%= metadataAttrs(item) %>>
   <svg class="spark" data-spark="project:<%- item.title %>" aria-hidden="true"></svg>

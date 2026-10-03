@@ -1,5 +1,8 @@
 ```{=html}
 <ul class="entries list">
+<% if (items.length === 0) { %>
+<li class="entry"><div class="when"></div><div><p class="entry-desc"><%- (templateParams && templateParams.empty) || "Entries will appear here as they are added." %></p></div></li>
+<% } %>
 <% for (const item of items) { %>
 <li class="entry<%= item.placeholder ? ' is-placeholder' : '' %>" <%= metadataAttrs(item) %>>
   <div class="when"><%- item.when || "" %></div>

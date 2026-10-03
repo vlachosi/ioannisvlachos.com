@@ -1,8 +1,12 @@
 # Projects, software, replication packages and notebooks.
 # Fields: title, kind, description, href, tags[], links[{label, url}]
 # Delete `placeholder: true` when an entry is real.
+# featured selects homepage entries; order is ascending display priority.
+# draft: true hides an entry from production; preview includes drafts.
 
 - title: "This website"
+  order: 10
+  featured: true
   kind: Website
   description: "Quarto with a hand-written theme. The front page simulates a year of implied volatility around scheduled announcements, and every page gets its own random-walk fingerprint."
   href: https://github.com/vlachosi/vlachosi.github.io
@@ -12,12 +16,16 @@
       url: https://github.com/vlachosi/vlachosi.github.io
 
 - title: "Project name"
+  order: 20
+  featured: true
   kind: Replication package
   description: "Code and data that reproduce the tables and figures of a paper."
   tags: [Python]
   placeholder: true
 
 - title: "Project name"
+  order: 30
+  featured: false
   kind: Software
   description: "A short description of what the tool does and who it is for."
   tags: [R]
