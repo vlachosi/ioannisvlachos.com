@@ -1,0 +1,13 @@
+/.quarto/
+/_site/
+/_site-preview/
+**/*.quarto_ipynb
+.DS_Store
+/_generated/
+/assets/og.png
+/assets/generated/
+/cv/_cv-status.html
+/cv/vlachos-cv.pdf
+__pycache__/
+/.venv/
+/AGENTS.md

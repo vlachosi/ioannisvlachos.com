@@ -1,0 +1,26 @@
+# Code: packages, replication-code, templates.
+# Fields: title, section, kind, description, href, tags[], links[{label, url}]
+# Replication entries use the paper title, with optional year, authors and venue.
+# Packages can include a version. Links point to the paper, code or documentation.
+# Delete `placeholder: true` when an entry is real.
+# featured selects homepage entries; order is ascending priority within a section.
+# draft: true hides an entry from production; preview includes drafts.
+# Empty sections are hidden on the public page.
+
+- title: "Paper title"
+  section: replication-code
+  order: 20
+  featured: true
+  kind: Replication code
+  description: "Code and instructions for reproducing the tables and figures of a paper using the required source data."
+  tags: [Python]
+  placeholder: true
+
+- title: "Package name"
+  section: packages
+  order: 30
+  featured: false
+  kind: R package
+  description: "A short description of what the package does and who it is for."
+  tags: [R]
+  placeholder: true

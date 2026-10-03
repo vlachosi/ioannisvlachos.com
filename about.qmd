@@ -1,0 +1,17 @@
+---
+title: "About"
+---
+
+::: {.about-lede}
+{{< include _generated/bio.qmd >}}
+:::
+
+::: {.content-visible when-meta="has-contact-links"}
+
+## Elsewhere
+
+```{=html}
+{{< include _generated/elsewhere.html >}}
+```
+
+:::

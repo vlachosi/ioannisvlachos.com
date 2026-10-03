@@ -1,0 +1,16 @@
+---
+title: "Research"
+description: "Current and forthcoming research."
+listing:
+  id: papers
+  contents: ../_generated/papers.yml
+  template: ../templates/papers.ejs
+  sort: "order"
+---
+
+```{=html}
+{{< include ../_generated/research-profiles.html >}}
+```
+
+::: {#papers}
+:::

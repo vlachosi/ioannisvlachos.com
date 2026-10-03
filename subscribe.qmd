@@ -1,0 +1,11 @@
+---
+title: "Subscribe"
+description: "Choose the updates you would like to follow."
+body-classes: subscribe-page
+metadata-files: [_generated/subscribe.yml]
+---
+
+```{=html}
+{{< include _generated/subscriptions.html >}}
+<script src="/assets/js/subscribe.js" defer></script>
+```

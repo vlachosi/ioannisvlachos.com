@@ -1,0 +1,58 @@
+---
+metadata-files: [_generated/home.yml]
+page-layout: custom
+anchor-sections: false
+body-classes: home
+---
+
+```{=html}
+<!-- Quarto moves hero headings inside native main tags into a title block. -->
+<div id="home-content" role="main">
+<div class="wrap">
+<section class="hero" aria-labelledby="hero-name">
+```
+
+{{< include _generated/home-profile.qmd >}}
+
+```{=html}
+</section>
+</div>
+```
+
+
+:::::: {.home-latest .wrap}
+
+:::: {.home-col}
+<h2 class="kicker">Research</h2>
+
+::: {#home-research}
+:::
+
+[All research →](research/index.qmd){.more}
+::::
+
+::::: {.content-visible when-meta="blog-enabled"}
+:::: {.home-col}
+<h2 class="kicker">Blog</h2>
+
+::: {#home-blog}
+:::
+
+[All posts →](writing/index.qmd){.more}
+::::
+:::::
+
+:::: {.home-col}
+<h2 class="kicker">Code</h2>
+
+::: {#home-projects}
+:::
+
+[All code →](projects/index.qmd){.more}
+::::
+
+::::::
+
+```{=html}
+</div>
+```
