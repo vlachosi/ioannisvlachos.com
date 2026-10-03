@@ -623,6 +623,32 @@ main.content {
   }
 }
 
+// Keep the profile links centred between the role and the section divider,
+// including spare row height created by a longer biography.
+@media (min-width: 768px) {
+  .hero__identity {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero__role {
+    margin-bottom: 2.8rem; // Match the hero's bottom padding.
+  }
+
+  .hero__identity > .id-links:first-of-type {
+    margin-top: auto;
+  }
+
+  .hero__identity > .id-links:last-child {
+    margin-bottom: auto;
+  }
+
+  .hero__identity .id-links > li {
+    display: flex;
+  }
+}
+
 @media (max-width: 767.98px) {
   .hero {
     padding-block: 2.75rem 2.5rem;
