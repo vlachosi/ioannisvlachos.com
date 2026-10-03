@@ -32,7 +32,7 @@ jobs:
           version: 1.9.38
       - name: Validate and render
         run: |
-          python scripts/prepare-site.py --check
+          python scripts/prepare-site.py
           python -m unittest discover -s tests -v
           quarto render --profile drafts --output-dir _site-preview --clean
           python scripts/check-site.py _site-preview --drafts

@@ -28,7 +28,7 @@ jobs:
 
       - name: Validate editable content
         run: |
-          python scripts/prepare-site.py --check
+          python scripts/prepare-site.py
           python -m unittest discover -s tests -v
 
       - uses: quarto-dev/quarto-actions/setup@v2

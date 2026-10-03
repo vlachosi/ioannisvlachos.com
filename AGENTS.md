@@ -12,6 +12,7 @@
 Use Quarto 1.9.38 and Python 3.12 with `requirements.txt`. Run relevant tests, then verify both outputs when changing content/build behavior:
 
 ```sh
+python scripts/prepare-site.py
 python -m unittest discover -s tests -v
 quarto render --clean
 python scripts/check-site.py _site

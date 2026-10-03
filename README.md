@@ -26,12 +26,14 @@ Install Quarto **1.9.38** and Python **3.12**, then:
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python scripts/prepare-site.py
 quarto preview --profile drafts
 ```
 
-Quarto validates content and prepares profile/CV inputs automatically before rendering. Generated files are ignored; edit their source records.
+The first preparation creates generated includes before Quarto scans the project; its pre-render hook keeps those profile/CV inputs current on later renders. Generated files are ignored; edit their source records.
 
 ```sh
+python scripts/prepare-site.py
 quarto render --clean
 python scripts/check-site.py _site
 quarto render --profile drafts --output-dir _site-preview --clean
