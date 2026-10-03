@@ -1,0 +1,14 @@
+---
+title: "Teaching"
+description: "Courses I have taught or tutored."
+listing:
+  id: teaching
+  contents: ../_generated/teaching.yml
+  template: ../templates/events.ejs
+  sort: false
+  template-params:
+    empty: "Teaching roles will appear here as they are added."
+---
+
+::: {#teaching}
+:::

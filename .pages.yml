@@ -1,0 +1,458 @@
+# Browser editor: https://app.pagescms.org
+# Edit main in Pages CMS. Successful production builds deploy its published content.
+# See docs/CMS-CONFIG.md for preview, publishing, and compatibility notes.
+settings:
+  content:
+    # Preserve post options outside these forms, including include-after-body.
+    # Pages CMS does not apply merge to top-level arrays; keep their schemas complete.
+    merge: true
+
+actions:
+  - name: build-preview
+    label: Build preview
+    workflow: preview.yml
+    ref: main
+    confirm:
+      title: Build a site preview?
+      message: Build the saved content on main, including drafts. Download the site-preview artifact from the completed GitHub Actions run. This action does not publish the website.
+      button: Build preview
+
+media:
+  - name: post_assets
+    label: Images and attachments
+    input: assets/uploads
+    output: /assets/uploads
+    extensions: [png, jpg, jpeg, webp, avif, gif, svg, pdf]
+    rename: safe
+  - name: cv_uploads
+    label: CV PDFs
+    input: _cv-uploads
+    # This is a repository source path, consumed by the site's preparation script.
+    # Only the selected PDF is copied to the stable public cv/vlachos-cv.pdf path.
+    output: _cv-uploads
+    extensions: [pdf]
+    rename: safe
+
+components:
+  entry_links:
+    type: object
+    label: Additional links
+    list: true
+    fields:
+      - name: label
+        label: Link label
+        type: string
+        required: true
+      - name: url
+        label: URL
+        type: string
+        required: true
+  feed_announcement:
+    type: object
+    label: RSS announcement
+    description: Add a date and stable ID to announce this entry in Research or Code feeds.
+    fields:
+      - name: id
+        label: Announcement ID
+        type: string
+        required: true
+        pattern:
+          regex: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+          message: Use lowercase words separated by hyphens.
+        description: Use lowercase words separated by hyphens; keep this ID unchanged.
+      - name: date
+        label: Announcement date
+        # A text date avoids the CMS date writer failing on an unused optional object.
+        type: string
+        required: true
+        default: ""
+        pattern:
+          regex: '^\d{4}-\d{2}-\d{2}$'
+          message: Use YYYY-MM-DD.
+        description: Use YYYY-MM-DD.
+  placeholder:
+    type: boolean
+    label: Mark as placeholder
+    default: false
+    description: Sample content shown in preview and excluded from the live site.
+  entry_draft:
+    type: boolean
+    label: Keep as draft
+    default: false
+    description: Show in preview only. Source files remain visible in this public repository.
+  featured:
+    type: boolean
+    label: Feature on homepage
+    default: false
+  display_order:
+    type: number
+    label: Display order
+    default: 100
+    description: Lower numbers appear first; leave at 100 for normal priority.
+
+content:
+  - name: profile
+    label: About
+    type: file
+    path: _data/profile.yml
+    format: yaml
+    operations:
+      delete: false
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+      - name: role
+        label: Role
+        type: string
+      - name: affiliation
+        label: Affiliation
+        type: string
+      - name: bio
+        label: Biography
+        type: code
+        options:
+          format: markdown
+        description: Markdown text shared by the homepage and About page.
+      - name: about_extra
+        label: More about me
+        type: code
+        options:
+          format: markdown
+        description: Additional paragraphs shown only on the About page.
+      - name: email
+        label: Contact email
+        type: string
+      - name: links
+        label: Profile links
+        type: object
+        # Keep this object present so merge does not restore URLs when all are cleared.
+        required: true
+        fields:
+          - name: orcid
+            label: ORCID URL
+            type: string
+          - name: google_scholar
+            label: Google Scholar URL
+            type: string
+          - name: ssrn
+            label: SSRN URL
+            type: string
+          - name: repec
+            label: RePEc URL
+            type: string
+          - name: arxiv
+            label: arXiv URL
+            type: string
+          - name: researchgate
+            label: ResearchGate URL
+            type: string
+          - name: semantic_scholar
+            label: Semantic Scholar URL
+            type: string
+          - name: scopus
+            label: Scopus URL
+            type: string
+          - name: github
+            label: GitHub URL
+            type: string
+          - name: linkedin
+            label: LinkedIn URL
+            type: string
+          - name: bluesky
+            label: Bluesky URL
+            type: string
+          - name: x
+            label: X URL
+            type: string
+      - name: sections
+        label: Page visibility
+        type: object
+        fields:
+          - name: teaching
+            label: Publish teaching page
+            type: boolean
+            default: false
+          - name: talks
+            label: Publish talks page
+            type: boolean
+            default: false
+          - name: blog
+            label: Publish blog page
+            type: boolean
+            default: true
+
+  - name: research
+    label: Research
+    type: file
+    path: research/papers.yml
+    format: yaml
+    list: true
+    operations:
+      delete: false
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: status
+        label: Status
+        type: select
+        required: true
+        options:
+          values:
+            - name: published
+              label: Published
+            - name: working
+              label: Working paper
+            - name: progress
+              label: In progress
+            - name: thesis
+              label: Thesis
+      - name: year
+        label: Year
+        type: number
+      - name: authors
+        label: Authors
+        type: string
+      - name: venue
+        label: Venue
+        type: string
+      - name: abstract
+        label: Abstract
+        type: text
+      - name: href
+        label: Main link
+        type: string
+      - name: links
+        component: entry_links
+      - name: feed
+        component: feed_announcement
+      - name: placeholder
+        component: placeholder
+      - name: draft
+        component: entry_draft
+      - name: featured
+        component: featured
+      - name: order
+        component: display_order
+
+  - name: projects
+    label: Code
+    type: file
+    path: projects/projects.yml
+    format: yaml
+    list: true
+    operations:
+      delete: false
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+        description: Paper title for replication code; package or template name otherwise.
+      - name: section
+        label: Section
+        type: select
+        required: true
+        options:
+          values:
+            - name: packages
+              label: Packages
+            - name: replication-code
+              label: Replication code
+            - name: templates
+              label: Templates
+      - name: kind
+        label: Type
+        type: string
+      - name: description
+        label: Description
+        type: text
+      - name: authors
+        label: Authors
+        type: string
+        description: For replication code, list the authors of the associated paper.
+      - name: year
+        label: Year
+        type: number
+        description: For replication code, enter the paper's publication year if available.
+      - name: venue
+        label: Publication / status
+        type: string
+        description: For replication code, enter the journal, working-paper series, or publication status.
+      - name: version
+        label: Version
+        type: string
+        description: For packages, enter the current release, for example 1.2.0.
+      - name: href
+        label: Main link
+        type: string
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: links
+        component: entry_links
+      - name: feed
+        component: feed_announcement
+      - name: placeholder
+        component: placeholder
+      - name: draft
+        component: entry_draft
+      - name: featured
+        component: featured
+      - name: order
+        component: display_order
+
+  - name: teaching
+    label: Teaching
+    type: file
+    path: teaching/teaching.yml
+    format: yaml
+    list: true
+    operations:
+      delete: false
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: when
+        label: Date or period
+        type: string
+      - name: where
+        label: Role and institution
+        type: string
+      - name: description
+        label: Description
+        type: text
+      - name: href
+        label: Main link
+        type: string
+      - name: links
+        component: entry_links
+      - name: placeholder
+        component: placeholder
+      - name: draft
+        component: entry_draft
+
+  - name: talks
+    label: Talks
+    type: file
+    path: talks/talks.yml
+    format: yaml
+    list: true
+    operations:
+      delete: false
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: when
+        label: Date or period
+        type: string
+      - name: where
+        label: Venue
+        type: string
+      - name: description
+        label: Description
+        type: text
+      - name: href
+        label: Main link
+        type: string
+      - name: links
+        component: entry_links
+      - name: placeholder
+        component: placeholder
+      - name: draft
+        component: entry_draft
+
+  - name: posts
+    label: Blog
+    type: collection
+    path: writing/posts
+    format: yaml-frontmatter
+    subfolders: true
+    filename:
+      template: "{fields.date}-{title}/index.qmd"
+      # Generated templates retain subfolders; the editable filename field does not.
+      field: false
+    operations:
+      rename: false
+    view:
+      layout: list
+      fields: [title, date, draft]
+      primary: title
+      sort: [date, title]
+      search: [title, description]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Summary
+        type: text
+        required: true
+      - name: date
+        label: Post date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+        description: Used in the folder name when creating a post. Changing it later keeps the URL.
+      - name: categories
+        label: Topics
+        type: string
+        list: true
+      - name: draft
+        label: Keep as draft
+        type: boolean
+        default: true
+        description: Drafts are excluded from the live site. Source files remain visible in this public repository.
+      - name: image
+        label: Social preview image
+        type: image
+        description: Image used when sharing the article on social platforms.
+        options:
+          media: post_assets
+          categories: [image]
+      - name: image-alt
+        label: Image description
+        type: string
+      - name: body
+        label: Article
+        type: code
+        required: true
+        options:
+          format: markdown
+        description: Markdown and Quarto source. This editor preserves equations, code cells, and custom HTML. Use Quarto preview to see the rendered article.
+
+  - name: cv
+    label: CV
+    type: file
+    path: _data/cv.yml
+    format: yaml
+    operations:
+      delete: false
+    fields:
+      - name: source
+        label: Current CV PDF
+        type: file
+        options:
+          media: cv_uploads
+          extensions: [pdf]
+        description: Upload and select the latest PDF, then save. The website keeps its existing CV download address. Clear this field to show the placeholder.
+      - name: updated
+        label: CV last updated
+        type: date
+        default: ""
+        options:
+          format: yyyy-MM-dd
+        description: Optional date displayed on the CV page; update it when you upload a new version.

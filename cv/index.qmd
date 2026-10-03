@@ -1,0 +1,10 @@
+---
+title: "Curriculum vitae"
+---
+
+<!-- Generated from _data/cv.yml by the site's pre-render step. -->
+{{< include _cv-status.html >}}
+
+```{=html}
+<script type="module" src="/assets/js/cv.js"></script>
+```

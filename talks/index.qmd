@@ -1,0 +1,14 @@
+---
+title: "Talks"
+description: "Seminars, conferences and workshops."
+listing:
+  id: talks
+  contents: ../_generated/talks.yml
+  template: ../templates/events.ejs
+  sort: false
+  template-params:
+    empty: "Talks and presentations will appear here as they are scheduled."
+---
+
+::: {#talks}
+:::

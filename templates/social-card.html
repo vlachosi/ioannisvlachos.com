@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-AU">
+<meta charset="utf-8">
+<title>Website sharing image</title>
+<style>
+@font-face { font-family: Petrona; font-weight: 100 900; src: url(data:font/woff2;base64,__FONT_PETRONA__) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 100 800; src: url(data:font/woff2;base64,__FONT_MONO__) format('woff2'); }
+html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+canvas { display: block; }
+</style>
+<canvas width="1200" height="630" aria-label="Website sharing image"></canvas>
+<script id="card-data" type="application/json">__CARD_DATA__</script>
+<script>
+async function renderCard() {
+  const data = JSON.parse(document.getElementById('card-data').textContent);
+  const faces = await Promise.all([
+    document.fonts.load('600 122px Petrona'),
+    document.fonts.load('400 50px Petrona'),
+    document.fonts.load('400 35.5px "JetBrains Mono"')
+  ]);
+  if (faces.some(list => !list.length || list.some(face => face.status !== 'loaded'))) {
+    throw new Error('The bundled sharing-image fonts did not load.');
+  }
+  const ctx = document.querySelector('canvas').getContext('2d');
+  const {paper, ink, muted, accent} = data.palette;
+  ctx.fillStyle = paper;
+  ctx.fillRect(0, 0, 1200, 630);
+
+  // Fixed abstract contours: decorative geometry, never invented research data.
+  const contours = [
+    ['M277 630 C490 601 676 550 832 454 C983 357 1070 297 1200 276', ink],
+    ['M360 630 C555 595 700 557 832 476 C980 383 1084 329 1200 320', muted],
+    ['M440 630 C600 601 717 568 832 498 C983 409 1095 361 1200 362', muted],
+    ['M522 630 C653 601 740 575 832 522 C987 432 1097 393 1200 404', accent],
+    ['M606 630 C689 607 765 585 832 547 C989 458 1104 429 1200 452', muted],
+    ['M689 630 C745 608 790 594 832 572 C989 484 1107 466 1200 500', ink],
+    ['M770 630 C790 619 814 609 832 600 C989 512 1110 504 1200 554', ink],
+    ['M853 630 C1000 550 1113 552 1200 603', muted]
+  ];
+  ctx.lineWidth = 1.6;
+  for (const [path, colour] of contours) {
+    ctx.strokeStyle = colour;
+    ctx.stroke(new Path2D(path));
+  }
+
+  function font(size, family, weight, tracking = 0) {
+    ctx.font = `${weight} ${size}px "${family}"`;
+    ctx.letterSpacing = `${size * tracking}px`;
+  }
+  function fit(lines, maximum, initial, family, weight, tracking = 0) {
+    let size = initial;
+    font(size, family, weight, tracking);
+    while (Math.max(...lines.map(text => ctx.measureText(text).width)) > maximum && size > 24) {
+      size -= 0.5;
+      font(size, family, weight, tracking);
+    }
+    if (Math.max(...lines.map(text => ctx.measureText(text).width)) > maximum) {
+      throw new Error('The profile text is too long for the sharing image. Please shorten the name, role or affiliation.');
+    }
+    return size;
+  }
+  // Draw by measured ink edges, not font line boxes, so the visual spacing is
+  // stable even when Pages CMS changes the words or punctuation.
+  function draw(text, left, top, colour) {
+    const m = ctx.measureText(text);
+    const height = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
+    ctx.fillStyle = colour;
+    ctx.fillText(text, left + m.actualBoundingBoxLeft, top + m.actualBoundingBoxAscent);
+    return {left, top, right: left + m.actualBoundingBoxLeft + m.actualBoundingBoxRight, bottom: top + height, text};
+  }
+  const nameSize = fit([data.name], 1040, 122, 'Petrona', 600, -0.035);
+  const name = draw(data.name, 80, 118, ink);
+  const lines = data.role && data.affiliation
+    ? [data.role + ' at', data.affiliation]
+    : [data.role || data.affiliation].filter(Boolean);
+  let roleBottom = name.bottom;
+  const role = [];
+  if (lines.length) {
+    const roleSize = fit(lines, 810, 50, 'Petrona', 400);
+    let top = 290;
+    for (const line of lines) {
+      const bounds = draw(line, 81, top, ink);
+      role.push(bounds);
+      roleBottom = bounds.bottom;
+      top += roleSize * 1.14;
+    }
+  }
+  const domainSize = fit([data.domain], 550, 35.5, 'JetBrains Mono', 400);
+  const domainMetrics = ctx.measureText(data.domain);
+  const domainHeight = domainMetrics.actualBoundingBoxAscent + domainMetrics.actualBoundingBoxDescent;
+  const gap = (630 - roleBottom - domainHeight) / 2;
+  const domain = draw(data.domain, 83, roleBottom + gap, muted);
+  return {name, nameSize, role, domain, domainSize, gapAbove: domain.top - roleBottom, gapBelow: 630 - domain.bottom};
+}
+</script>
+</html>

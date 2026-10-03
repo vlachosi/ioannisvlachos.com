@@ -1,0 +1,60 @@
+<%
+const sections = [
+  ["packages", "Packages"],
+  ["replication-code", "Replication code"],
+  ["templates", "Templates"],
+];
+%>
+```{=html}
+<script>
+// These grouped entries are static; Quarto's shared hash handler expects a registry.
+window['quarto-listings'] = window['quarto-listings'] || {};
+</script>
+<div class="code-sections">
+<% if (items.length === 0) { %>
+<p class="entry-desc">Code will appear here as it is ready.</p>
+<% } %>
+<% for (const [section, heading] of sections) {
+  const group = items.filter((item) => item.section === section);
+  if (group.length === 0) continue;
+%>
+<section class="entry-group" id="<%- section %>" aria-labelledby="<%- section %>-heading">
+<h2 id="<%- section %>-heading"><%- heading %></h2>
+<ul class="<%= section === 'replication-code' ? 'entries' : 'cards' %>">
+<% for (const item of group) { %>
+<% if (section === 'replication-code') { %>
+<li class="entry replication-entry<%= item.year ? '' : ' entry-no-year' %><%= item.placeholder ? ' is-placeholder' : '' %>"<% if (item.feed && item.feed.id) { %> id="code-<%- item.feed.id %>"<% } %> <%= metadataAttrs(item) %>>
+  <% if (item.year) { %><div class="when"><%- item.year %></div><% } %>
+  <div>
+    <h3 class="entry-title"><% if (item.href) { %><a href="<%- item.href %>"><%= item.title %></a><% } else { %><%= item.title %><% } %><% if (item.placeholder) { %><span class="placeholder-tag">placeholder</span><% } %></h3>
+    <% if (item.authors || item.venue) { %><p class="entry-sub"><% if (item.authors) { %><%- item.authors %><% } %><% if (item.authors && item.venue) { %> · <% } %><% if (item.venue) { %><span class="venue"><%- item.venue %></span><% } %></p><% } %>
+    <% if (item.description) { %><p class="entry-desc"><%= item.description %></p><% } %>
+    <% if (item.tags && item.tags.length) { %><p class="code-tags"><%- item.tags.join(" · ") %></p><% } %>
+    <% if (item.links && item.links.length) { %>
+    <ul class="pill-links">
+      <% for (const l of item.links) { %><li><a href="<%- l.url %>"><%- l.label %></a></li><% } %>
+    </ul>
+    <% } %>
+  </div>
+</li>
+<% } else { %>
+<li class="card<%= item.placeholder ? ' is-placeholder' : '' %>"<% if (item.feed && item.feed.id) { %> id="code-<%- item.feed.id %>"<% } %> <%= metadataAttrs(item) %>>
+  <% if (section !== 'packages') { %><svg class="spark" data-spark="project:<%- item.title %>" aria-hidden="true"></svg><% } %>
+  <div class="card-kind"><%- item.kind || (section === 'packages' ? 'Package' : 'Template') %></div>
+  <h3 class="card-title"><% if (item.href) { %><a href="<%- item.href %>"><%= item.title %></a><% } else { %><%= item.title %><% } %><% if (item.placeholder) { %><span class="placeholder-tag">placeholder</span><% } %></h3>
+  <% if (item.description) { %><p class="card-desc"><%= item.description %></p><% } %>
+  <% if (section === 'packages' && item.version) { %><p class="package-version">Version <%- item.version %></p><% } %>
+  <% if (item.tags && item.tags.length) { %><p class="card-tags"><%- item.tags.join(" · ") %></p><% } %>
+  <% if (item.links && item.links.length) { %>
+  <ul class="pill-links">
+    <% for (const l of item.links) { %><li><a href="<%- l.url %>"><%- l.label %></a></li><% } %>
+  </ul>
+  <% } %>
+</li>
+<% } %>
+<% } %>
+</ul>
+</section>
+<% } %>
+</div>
+```

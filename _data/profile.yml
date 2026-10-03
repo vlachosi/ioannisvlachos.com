@@ -1,0 +1,30 @@
+# Shared identity and biography. Edit these fields in the content manager.
+name: Ioannis Vlachos
+role: Honours Student
+affiliation: Monash Business School
+bio: |
+  My research is in empirical asset pricing, mainly in option markets.
+
+  In my Honours year I'm studying how options price the volatility that comes with news, from scheduled announcements such as earnings releases to unscheduled events.
+
+about_extra: |
+  I also like building computers and experimenting with AI. I'm currently putting together a homelab setup to run models locally.
+
+email: ""
+links:
+  orcid: https://orcid.org/0009-0003-1216-2488
+  google_scholar: ""
+  ssrn: https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=13292568
+  repec: ""
+  arxiv: ""
+  researchgate: ""
+  semantic_scholar: ""
+  scopus: ""
+  github: https://github.com/vlachosi
+  linkedin: https://www.linkedin.com/in/iivlachos/
+  bluesky: https://bsky.app/profile/vlachosi.bsky.social
+  x: https://x.com/vlachosii
+sections:
+  talks: false
+  teaching: false
+  blog: false

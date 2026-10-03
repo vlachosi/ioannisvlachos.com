@@ -1,0 +1,62 @@
+project:
+  type: website
+  output-dir: _site
+  pre-render: python3 scripts/prepare-site.py
+  post-render: python3 scripts/build-feeds.py
+  # Anchor paths so alternating builds cannot recopy the other output directory.
+  resources:
+    - /CNAME
+    - /assets/fonts/
+    - /assets/js/
+    - /assets/vendor/
+    - /assets/uploads/
+    - /assets/og.png
+    - /assets/generated/
+    - /cv/vlachos-cv.pdf
+
+# The preparation hook generates this from the browser-editable profile.
+metadata-files:
+  - _generated/site.yml
+
+lang: en-AU
+
+website:
+  site-url: "https://ioannisvlachos.com"
+  repo-url: "https://github.com/vlachosi/ioannisvlachos.com"
+  favicon: assets/favicon.svg
+  open-graph: true
+  twitter-card:
+    card-style: summary_large_image
+  search:
+    location: navbar
+    type: overlay
+  page-navigation: false
+  back-to-top-navigation: false
+  page-footer:
+    right:
+      # Explicit markup keeps Quarto from replacing the icon with the page title.
+      - text: '<i class="bi bi-rss" aria-hidden="true"></i><span class="sr-only">Subscribe to updates</span>'
+        href: subscribe.qmd
+
+format:
+  html:
+    theme:
+      light: [styles/common.scss, styles/light.scss]
+      dark: [styles/common.scss, styles/dark.scss]
+    respect-user-color-scheme: false
+    css: styles/fonts.css
+    html-math-method:
+      method: katex
+      url: /assets/vendor/katex/
+    highlight-style:
+      light: a11y
+      dark: a11y-dark
+    code-copy: hover
+    title-block-categories: false
+    anchor-sections: true
+    smooth-scroll: false
+    link-external-icon: false
+    link-external-newwindow: false
+
+execute:
+  freeze: auto

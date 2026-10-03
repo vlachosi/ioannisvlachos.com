@@ -1,0 +1,31 @@
+---
+title: "Blog"
+description: "Perspectives on research, financial markets, statistics and code."
+body-classes: blog-index
+language:
+  listing-page-field-categories: Topics
+  listing-page-filter: Filter posts
+  listing-page-order-by: Sort posts
+  listing-page-order-by-default: Newest first
+listing:
+  id: posts
+  contents: posts
+  template: ../templates/posts.ejs
+  fields: [date, title, description, categories]
+  sort: "date desc"
+  sort-ui: [date, title]
+  filter-ui: [title, description, categories]
+  categories: cloud
+  feed:
+    items: 50
+  template-params:
+    empty: "Nothing published yet. The first post is on its way."
+---
+
+::: {#posts}
+:::
+
+```{=html}
+<script src="/assets/js/blog.js" defer></script>
+<noscript><style>.blog-index .listing-actions-group, .blog-index #quarto-margin-sidebar, .blog-index .post-topics { display: none; }</style></noscript>
+```
