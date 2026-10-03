@@ -1,5 +1,5 @@
 # Browser editor: https://app.pagescms.org
-# Saves commit to the branch selected in Pages CMS. On main, successful builds deploy.
+# Edit main in Pages CMS. Successful production builds deploy its published content.
 # See docs/CMS-CONFIG.md for preview, publishing, and compatibility notes.
 settings:
   content:
@@ -11,10 +11,10 @@ actions:
   - name: build-preview
     label: Build preview
     workflow: preview.yml
-    ref: current
+    ref: main
     confirm:
       title: Build a site preview?
-      message: Build the saved content on this branch, including drafts. Download the site-preview artifact from the completed GitHub Actions run. This action does not publish the website.
+      message: Build the saved content on main, including drafts. Download the site-preview artifact from the completed GitHub Actions run. This action does not publish the website.
       button: Build preview
 
 media:

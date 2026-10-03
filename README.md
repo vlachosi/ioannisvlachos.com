@@ -1,6 +1,8 @@
-# vlachosi.github.io
+# Ioannis Vlachos — personal website
 
 My academic website, built with Quarto and published at <https://ioannisvlachos.com> through GitHub Pages.
+
+See the [website management review](docs/REVIEW.md) for the changes made and remaining recommendations.
 
 ## Edit in the browser
 
@@ -12,9 +14,9 @@ My academic website, built with Quarto and published at <https://ioannisvlachos.
 - **CV:** upload a PDF, select the current version, and set its updated date.
 - **Build preview:** render saved content with drafts into a downloadable Actions artifact.
 
-The configuration must be committed to the selected GitHub branch, and the Pages CMS GitHub App must be authorized for this repository. Account connection is separate from this code.
+Select **main** in Pages CMS and authorize its GitHub App for this repository. All development and content editing flow through main. Account connection is separate from this code.
 
-**Saving to main can publish changes.** Other branches become live when merged. New posts default to draft; a future date does not schedule publication. See [the editing guide](docs/EDITING.md) and [CMS configuration notes](docs/CMS-CONFIG.md).
+**Saving to main can publish changes.** New posts default to draft, so you can save and preview them before clearing that switch to publish. A future date does not schedule publication. See [the editing guide](docs/EDITING.md) and [CMS configuration notes](docs/CMS-CONFIG.md).
 
 ## Preview and build locally
 
@@ -60,7 +62,7 @@ Only the selected CV is copied to **cv/vlachos-cv.pdf**. Do not edit that genera
 
 ## Publication
 
-Pull requests and main pushes validate content, run tests, and check both build modes. Each build saves a **site-preview** artifact. Only checked production output is deployed, and only from main.
+Pushes to main validate content, run tests, and check both build modes. Each build saves a **site-preview** artifact. Only checked production output is deployed, and only from main.
 
 The separate **Build preview** workflow never deploys. Once its workflow exists on the default branch, run it from Pages CMS or GitHub Actions. The artifact contains drafts and is a download, not a hosted review URL.
 
