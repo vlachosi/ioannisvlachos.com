@@ -4,10 +4,6 @@ title: "About"
 
 ::: {.about-lede}
 {{< include _generated/bio.qmd >}}
-
-```{=html}
-{{< include _generated/rig.html >}}
-```
 :::
 
 ## Elsewhere
@@ -15,9 +11,3 @@ title: "About"
 ```{=html}
 {{< include _generated/elsewhere.html >}}
 ```
-
-## Colophon
-
-The dial on the front page is a simulated year of implied volatility: it builds into each scheduled announcement, such as earnings or a central bank decision, and falls once the news is out. Each draw places the announcements at new dates. It runs in your browser, a few hundred lines of plain JavaScript with no libraries. Every page and post also carries a short random walk seeded from its own address.
-
-The site is built with [Quarto](https://quarto.org), and the [source is on GitHub](https://github.com/vlachosi/vlachosi.github.io).

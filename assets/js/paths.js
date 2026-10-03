@@ -13,7 +13,7 @@
  *   data-mu, data-sigma          model parameters (defaults 0.06, 0.2)
  *   data-ymin, data-ymax         fixed vertical range (default: from the model)
  *   data-url-seed                read ?seed=<n> from the URL, write it on redraw
- *   [data-count] [data-seed] [data-readout] [data-redraw]
+ *   [data-seed] [data-redraw]
  *   <input data-param="mu|sigma"> with an <output data-for="mu|sigma">
  */
 (function () {
@@ -113,8 +113,6 @@
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     const seedLabel = figure.querySelector("[data-seed]");
-    const countLabel = figure.querySelector("[data-count]");
-    const readout = figure.querySelector("[data-readout]");
     const redrawButton = figure.querySelector("[data-redraw]");
     const inputs = figure.querySelectorAll("input[data-param]");
     const useUrlSeed = figure.hasAttribute("data-url-seed");
@@ -197,7 +195,6 @@
       if (nPaths !== state.nPaths || !state.sim) {
         state.nPaths = nPaths;
         state.sim = simulate(model, state.seed, nPaths);
-        if (countLabel) countLabel.textContent = String(nPaths);
       }
     }
 
@@ -387,24 +384,12 @@
 
     // --- Labels -------------------------------------------------------------
 
-    function updateReadout() {
-      if (!readout) return;
-      const index = state.hover === null ? STEPS : state.hover;
-      const t = (index / STEPS) * model.years;
-      const lead = state.sim.paths[0][index];
-      const days = String(index).padStart(3, " ");
-      readout.textContent =
-        `t = ${days}d · S = ${lead.toFixed(2)} · 90% band ` +
-        `${quantileAt(model, t, -Z90).toFixed(2)}–${quantileAt(model, t, Z90).toFixed(2)}`;
-    }
-
     function updateLabels() {
       if (seedLabel) seedLabel.textContent = `seed ${state.seed}`;
       for (const input of inputs) {
         const output = figure.querySelector(`output[data-for="${input.dataset.param}"]`);
         if (output) output.textContent = `${Math.round(model[input.dataset.param] * 100)}%`;
       }
-      updateReadout();
     }
 
     // --- Animation ----------------------------------------------------------
@@ -438,14 +423,12 @@
       }
       if (index !== state.hover) {
         state.hover = index;
-        updateReadout();
         draw();
       }
     });
 
     canvas.addEventListener("pointerleave", () => {
       state.hover = null;
-      updateReadout();
       if (state.progress >= 1) draw();
     });
 

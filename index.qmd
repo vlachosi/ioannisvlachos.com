@@ -3,9 +3,6 @@ metadata-files: [_generated/home.yml]
 page-layout: custom
 anchor-sections: false
 body-classes: home
-include-after-body:
-  - text: |
-      <script src="/assets/js/dial.js" defer></script>
 listing:
   - id: home-research
     contents: /_generated/papers.yml
@@ -45,18 +42,6 @@ listing:
 {{< include _generated/home-profile.qmd >}}
 
 ```{=html}
-  <figure class="hero__dial" data-dial data-url-seed>
-    <canvas role="img" aria-label="A simulated year of implied volatility, January at the top and running clockwise. It rises into each scheduled announcement, such as earnings or an FOMC decision, and falls once the news is out; the inner ticks show daily price moves, which spike on announcement days."></canvas>
-    <figcaption>
-      <span class="kicker">Question</span>
-      <span class="hero__dial-caption">I get jumpy leading into announcements and collapse once the news is public.</span>
-      <span class="hero__dial-actions">
-        <button type="button" class="mono" data-reveal aria-expanded="false" aria-controls="dial-answer">What am I?</button>
-        <button type="button" class="mono" data-redraw>↻ redraw</button>
-      </span>
-      <span class="hero__dial-answer" id="dial-answer" data-answer aria-live="polite" hidden><strong>Implied volatility.</strong></span>
-    </figcaption>
-  </figure>
 </section>
 </div>
 ```

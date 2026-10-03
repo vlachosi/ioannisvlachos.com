@@ -57,7 +57,7 @@ def render_profile(profile: dict, generated_dir: Path, repo_root: Path | None = 
     role = str(profile.get("role") or "")
     affiliation = str(profile.get("affiliation") or "")
     bio = str(profile.get("bio") or "").strip()
-    rig = str(profile.get("rig") or "")
+    about_extra = str(profile.get("about_extra") or "").strip()
     email = str(profile.get("email") or "").strip()
     links = {key: str(url) for key, url in (profile.get("links") or {}).items() if key in LINK_LABELS and url}
     position = " at ".join(part for part in [role, affiliation] if part)
@@ -78,16 +78,18 @@ def render_profile(profile: dict, generated_dir: Path, repo_root: Path | None = 
     home_html = [
         '<div class="hero__text">',
         f'<h1 class="hero__name" id="hero-name">{escape(name)}</h1>',
+        '<div class="hero__identity">',
         f'<p class="hero__role">{role_html}</p>' if role_html else "",
         '<ul class="id-links" aria-label="Academic profiles">' + "\n".join(academic_links) + '</ul>' if academic_links else "",
         '<ul class="id-links" aria-label="Social profiles and email">' + "\n".join(social_links) + '</ul>',
+        '</div>',
     ]
     home = "```{=html}\n" + "\n".join(home_html) + "\n```\n\n"
     home += '::: {.hero__about}\n' + bio + '\n\n[More about me →](about.qmd){.more}\n:::\n\n'
     home += '```{=html}\n</div>\n```\n'
     _write_changed(generated_dir / "home-profile.qmd", home)
-    _write_changed(generated_dir / "bio.qmd", bio + "\n")
-    _write_changed(generated_dir / "rig.html", f'<p><span class="rig">Current rig: {escape(rig)}</span></p>\n' if rig else "")
+    about_bio = "\n\n".join(part for part in (bio, about_extra) if part)
+    _write_changed(generated_dir / "bio.qmd", about_bio + "\n")
 
     elsewhere = ['<ul class="elsewhere">', '<li><span class="label">Email</span><span data-email-slot><span class="placeholder-tag" style="margin-left:0">placeholder</span></span></li>']
     for key, label in LINK_LABELS.items():

@@ -3,10 +3,11 @@ name: Ioannis Vlachos
 role: Honours Student
 affiliation: Monash Business School
 bio: |
-  I'm an Honours Student at Monash Business School. The focus of my research is how markets price information in options and volatility, how much of scheduled news such as an earnings announcement is already in option prices, and how efficiently the rest is absorbed.
+  I'm an Honours Student at Monash Business School. My research focuses on information and market efficiency, particularly in options and volatility. I study how much information is already reflected in prices and how quickly and fully markets respond to new information, from scheduled announcements such as earnings releases to unexpected events.
 
-  AI is my other obsession. I'm currently building my own homelab to run models locally, which felt inevitable as I've been long custom PC building since I was twelve and have never closed the position.
-rig: AMD Ryzen 9 9950X3D · NVIDIA GeForce RTX 5080 · 96 GB DDR5
+about_extra: |
+  I also like building computers and experimenting with AI. I'm currently putting together a homelab setup to run models locally.
+
 email: ""
 links:
   orcid: https://orcid.org/0009-0003-1216-2488

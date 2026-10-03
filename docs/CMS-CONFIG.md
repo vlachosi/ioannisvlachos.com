@@ -1,41 +1,52 @@
-# CMS configuration notes
+# Setup and maintenance
 
-[`.pages.yml`](../.pages.yml) defines the forms for the hosted [Pages CMS](https://app.pagescms.org). The public website remains a Quarto site on GitHub Pages; the CMS edits its source files through GitHub.
+For everyday changes, use the [editing guide](EDITING.md).
 
-## Connect and publish
+## Local setup
 
-Sign in to Pages CMS with GitHub, install its GitHub App for this repository, then open the repository on **main**. Development and content editing both use main. No application secrets belong in this repository.
+Install **Quarto 1.9.38** and **Python 3.12**, then run from the repository root:
 
-**Saving on main triggers the checked production build.** Keep posts and unfinished research/project entries marked as drafts while preparing them, then clear their draft switch to publish. Profile and CV changes become live after the next successful build. This configuration uses draft fields and previews within main rather than a pull-request publishing workflow.
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python scripts/prepare-site.py
+quarto preview --profile drafts
+```
 
-New writing defaults to `draft: true`. Clear **Keep as draft** when the article is ready for a production build. A future post date does not schedule publication. Drafts and unused uploads are not confidential: their source files are visible in this public repository.
+Run preparation before the first Quarto command: it creates includes Quarto needs while scanning a fresh checkout. The pre-render hook refreshes them afterward. Edit source records, not ignored `_generated/` files or `cv/vlachos-cv.pdf`.
 
-The **Build preview** action starts the dedicated [preview workflow](https://github.com/vlachosi/vlachosi.github.io/actions/workflows/preview.yml) on main. Save your edits first: unsaved form changes are not included. The workflow renders the site with drafts and creates a `site-preview` artifact; it never deploys the public website. Saving edits on main still triggers the separate publication workflow described above.
+To check changes locally:
 
-Follow the run's progress in GitHub Actions, then download `site-preview` from its Artifacts section after it succeeds. The artifact is a rendered site bundle, not a hosted preview URL. Serve its extracted directory over HTTP to inspect it; opening `index.html` directly does not reliably resolve the site's root-relative assets. The normal CI workflow also produces a draft preview artifact for its runs. Use the site's local preview workflow for an immediately browsable version.
+```sh
+python -m unittest discover -s tests -v
+quarto render --clean
+python scripts/check-site.py _site
+quarto render --profile drafts --output-dir _site-preview --clean
+python scripts/check-site.py _site-preview --drafts
+```
 
-The Pages CMS button requires GitHub Actions access and the preview workflow to have been added to the default branch. Its dispatch contract is `workflow_dispatch` with a string `payload` input; Pages CMS sends the selected branch and action context there. No preview workflow consumes the payload as shell commands. The button and hosted authentication have not been exercised against the live repository. A screenshot of an offline form preview demonstrates the fields only, not a live authenticated CMS session.
+Stop a live preview before building into its output directory. The [publication workflow](../.github/workflows/publish.yml) runs these checks and deploys only production from main. The separate [preview workflow](../.github/workflows/preview.yml) creates a draft artifact without deploying.
 
-## Form contracts
+## Configuration to preserve
 
-| Form | Stored content | Behavior |
-| --- | --- | --- |
-| Writing | `writing/posts/<date>-<title>/index.qmd` | The initial post date and title generate the folder. Later edits retain its URL. Renaming through the CMS is disabled. |
-| Research, Projects | Existing YAML lists | Every supported field is modelled, including links, placeholder/draft status, homepage selection, and display order. |
-| Profile and contact | `_data/profile.yml` | Shared homepage/About identity, contact links, and optional Talks/Teaching visibility. |
-| CV | `_data/cv.yml` | Selects a PDF from `_cv-uploads/`; the build prepares the stable `cv/vlachos-cv.pdf` download. |
-| Talks, Teaching | Existing YAML lists | Edit content here; enable the page in Profile and contact. |
+| Area | Source / requirement |
+| --- | --- |
+| Browser forms | [.pages.yml](../.pages.yml) |
+| Shared profile / CV selection | [_data/profile.yml](../_data/profile.yml) / [_data/cv.yml](../_data/cv.yml) |
+| Page structure / appearance | QMD pages, [templates/](../templates/), [styles/](../styles/), and [assets/js/](../assets/js/) |
+| Site and build settings | [_quarto.yml](../_quarto.yml) and [scripts/](../scripts/) |
 
-Writing and biography use a **Markdown source editor**. Equations, Quarto attributes, executable cells, and raw HTML are not passed through a generic rich-text editor. Use Quarto's own visual editor when a visual writing interface is needed. Executable articles still require their dependencies and valid frozen output; uploading source in the CMS does not execute it.
+`settings.content.merge: true` preserves post options outside the forms, such as custom scripts. **Pages CMS does not merge top-level YAML lists.** Keep all Research, Projects, Talks, and Teaching fields in their form schemas; omitted fields can be lost on save. Formatting and comments may also be rewritten. Keep post renaming disabled to preserve article URLs.
 
-The **Images and attachments** media library uploads to `assets/uploads/`. For an inline image, upload it there and use its public path in Markdown, for example `![Description](/assets/uploads/figure.png)`. The **Listing image** field selects an image from the same library.
+The preview button dispatches `preview.yml` on main with a string `payload` input. Keep that contract if changing the workflow; the payload is not executed as shell commands.
 
-For CV updates, upload the PDF in the CV form, select it as **Current CV PDF**, optionally update its date, and save the form. Uploading alone does not select a version. Duplicate filenames may gain a numeric suffix; this is why the form selects a source file instead of relying on replacement of an existing filename. Clearing the selection restores the site's CV placeholder. Only the selected PDF is copied to the public CV path; uploads still exist in Git history and the public source repository.
+Plain prose, equations, and displayed code need no R/Jupyter runtime. Before adding executable R/Python posts, pin their dependencies or establish a frozen-output policy. **`freeze: auto` can execute changed source**; committing `_freeze/` alone does not guarantee code never runs.
 
-## Preservation and validation
+Bundled fonts, KaTeX, and PDF.js retain their licenses under [assets/fonts/](../assets/fonts/) and [assets/vendor/](../assets/vendor/). Keep PDF.js main and worker versions together when updating them.
 
-`settings.content.merge: true` retains post metadata that is outside the forms, including the sample article's `include-after-body` script. The current Pages CMS implementation does **not** merge top-level array files. Keep the complete Research, Projects, Talks, and Teaching schemas in sync when adding fields, or form saves can remove unknown fields. YAML formatting and comments may be rewritten by the CMS serializer.
+## Connection status
 
-The configuration was checked against the official Pages CMS source at commit [`6f4e860`](https://github.com/pages-cms/pages-cms/tree/6f4e860a35d934406580287e7042e5e111e207a1), version 2.1.8: its configuration schema, normalization, nested filename generation, and YAML/frontmatter serialization. This verifies source compatibility, not a completed authenticated save in the hosted application. On first connection, create and reopen a draft on main, add an image, and build a preview before publishing it. Verify the actual PDF when making the first CV selection.
+CMS configuration was checked against [Pages CMS 2.1.8 source](https://github.com/pages-cms/pages-cms/tree/6f4e860a35d934406580287e7042e5e111e207a1), including schema and serialization behavior. This does not establish successful hosted authentication or saves; complete the first-use check in the editing guide. See the official [configuration documentation](https://pagescms.org/docs/configuration/) when changing forms.
 
-Official references: [configuration fields](https://pagescms.org/docs/configuration/content/fields/), [whole-file lists](https://pagescms.org/docs/configuration/content/list/), [filename templates](https://pagescms.org/docs/configuration/content/filename/), [media](https://pagescms.org/docs/configuration/media/), [settings](https://pagescms.org/docs/configuration/settings/), [custom Actions](https://pagescms.org/docs/configuration/actions/), and [GitHub connection](https://pagescms.org/docs/quick-start/).
+The requested repository rename to `ioannisvlachos.com` remains incomplete: GitHub integration permissions blocked it with HTTP 403. An owner can rename it in GitHub settings, then update repository links/CMS access and verify Pages, DNS, and HTTPS. The public site address is already `https://ioannisvlachos.com`.

@@ -44,7 +44,7 @@ class ProfileTests(unittest.TestCase):
 
     def test_contact_and_identity_are_escaped_in_generated_html(self):
         profile = deepcopy(self.profile)
-        profile.update(name='Ada <Example> & Co', email='a</script>@example.com', rig='')
+        profile.update(name='Ada <Example> & Co', email='a</script>@example.com')
         profile["links"] = {"github": "https://example.com/a?x=1&y=2", "x": ""}
         config = self.render(profile)
         self.assertEqual(config["website"]["title"], 'Ada <Example> & Co')
@@ -54,7 +54,6 @@ class ProfileTests(unittest.TestCase):
         self.assertNotIn('a</script>@', after)
         self.assertIn('a\\u003c/script\\u003e@example.com', after)
         self.assertIn('href="https://example.com/a?x=1&amp;y=2"', (self.generated / "elsewhere.html").read_text())
-        self.assertEqual((self.generated / "rig.html").read_text(), "")
         self.assertEqual(config["website"]["twitter-card"]["creator"], "")
         self.assertEqual(len(config["website"]["page-footer"]["center"]), 1)
 

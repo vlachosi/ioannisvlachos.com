@@ -8,7 +8,7 @@
   order: 10
   featured: true
   kind: Website
-  description: "Quarto with a hand-written theme. The front page simulates a year of implied volatility around scheduled announcements, and every page gets its own random-walk fingerprint."
+  description: "Quarto with a hand-written theme and a typographic introduction. Every page gets its own random-walk fingerprint."
   href: https://github.com/vlachosi/vlachosi.github.io
   tags: [Quarto, JavaScript, SCSS]
   links:

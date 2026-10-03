@@ -79,7 +79,7 @@ def validate_profile(profile):
     if not isinstance(profile, dict):
         raise ContentError("_data/profile.yml: expected a settings object")
     text(profile.get("name"), "Profile > Name", required=True)
-    for key in ("role", "affiliation", "bio", "rig", "email"):
+    for key in ("role", "affiliation", "bio", "about_extra", "email"):
         text(profile.get(key), f"Profile > {key}")
     email = profile.get("email") or ""
     if email and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):

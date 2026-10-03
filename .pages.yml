@@ -114,8 +114,9 @@ content:
         default: true
         description: Drafts are excluded from the live site. Source files remain visible in this public repository.
       - name: image
-        label: Listing image
+        label: Social preview image
         type: image
+        description: Image used when sharing the article on social platforms.
         options:
           media: post_assets
           categories: [image]
@@ -235,13 +236,16 @@ content:
         options:
           format: markdown
         description: Markdown text shared by the homepage and About page.
-      - name: rig
-        label: Computing setup
-        type: string
+      - name: about_extra
+        label: More about me
+        type: code
+        options:
+          format: markdown
+        description: Additional paragraphs shown only on the About page.
       - name: email
         label: Contact email
         type: string
-        description: Leave blank to hide the contact link. Saved contact details are public.
+        description: Leave blank to show a placeholder until ready. Saved contact details are public.
       - name: links
         label: Profile links
         type: object

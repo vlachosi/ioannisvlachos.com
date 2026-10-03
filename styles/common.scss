@@ -256,10 +256,6 @@ svg.spark {
     stroke-linecap: round;
     vector-effect: non-scaling-stroke;
   }
-
-  .spark-end {
-    fill: var(--accent);
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -515,35 +511,38 @@ main.content {
 // ---------------------------------------------------------------------------
 
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
-  align-items: center;
-  padding-block: $page-top $section-gap;
-
-  // Name, role, links and bio on the left; the year dial on the right.
-  @media (min-width: 992px) {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: 3rem;
-  }
+  padding-block: clamp(3rem, 6vw, 5rem) 2.8rem;
 }
 
+.hero__text {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.78fr) minmax(0, 1.22fr);
+  column-gap: clamp(3rem, 7vw, 6rem);
+  row-gap: 2.5rem;
+  align-items: start;
+}
+
+.hero__identity {
+  grid-column: 1;
+  padding-top: 0.25rem;
+}
 
 .hero__name {
-  font-size: $fs-display;
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  margin: 0 0 1.25rem;
+  grid-column: 1 / -1;
+  font-size: clamp(3.5rem, 6.5vw, 5.5rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  margin: 0;
 }
 
 .hero__role {
   font-family: $headings-font-family;
-  font-size: clamp(1.25rem, 2.2vw, #{$fs-h2});
+  font-size: clamp(1.25rem, 1.8vw, #{$fs-h2});
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.45;
   color: var(--ink);
-  margin-bottom: 1.75rem;
+  margin-bottom: 2rem;
 }
 
 
@@ -602,89 +601,60 @@ main.content {
   }
 }
 
-.hero__dial {
-  margin: 0;
-
-  canvas {
-    display: block;
-    width: 100%;
-    aspect-ratio: 1 / 0.9;
-    touch-action: pan-y;
-
-    // On phones the event labels limit the dial's width, so it needs less height.
-    @media (max-width: 520px) {
-      aspect-ratio: 1 / 0.78;
-    }
-  }
-
-  figcaption {
-    display: grid;
-    justify-items: center;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-    text-align: center;
-  }
-
-  .hero__dial-caption {
-    max-width: 22rem;
-    font-size: $fs-small;
-    color: var(--muted);
-    text-wrap: balance;
-  }
-
-  .hero__dial-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .hero__dial-answer {
-    font-size: $fs-small;
-    color: var(--ink);
-
-    strong {
-      font-family: $headings-font-family;
-      font-weight: 700;
-    }
-  }
-
-  button {
-    margin-top: 0.2rem;
-    font-size: $fs-mono;
-    color: var(--ink);
-    background: transparent;
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    padding: 0.1rem 0.6rem;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-  }
-}
-
 .hero__about {
-  max-width: 40rem;
-  margin-top: 2rem;
+  grid-column: 2;
+  max-width: 58ch;
+  margin: 0;
 
   p {
     font-family: $headings-font-family;
-    font-size: $fs-lead;
+    font-size: 1.13rem;
     font-weight: 400;
-    line-height: 1.5;
-    margin: 0 0 1rem;
+    line-height: 1.6;
+    margin: 0 0 1.05rem;
   }
 
   .more {
-    margin-top: 0.25rem;
+    margin-top: 0.4rem;
   }
 
   > :last-child {
     margin-bottom: 0;
   }
+}
+
+@media (max-width: 767.98px) {
+  .hero {
+    padding-block: 2.75rem 2.5rem;
+  }
+
+  .hero__text {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.7rem;
+  }
+
+  .hero__name {
+    font-size: clamp(2.2rem, 8.5vw, 4rem);
+    letter-spacing: -0.025em;
+  }
+
+  .hero__identity,
+  .hero__about {
+    grid-column: 1;
+  }
+
+  .hero__role {
+    margin-bottom: 1.7rem;
+  }
+
+  .hero__about {
+    margin-top: 0.15rem;
+
+    p {
+      font-size: 1.06rem;
+    }
+  }
+
 }
 
 .paths-figure {
@@ -1171,16 +1141,6 @@ main.content {
   p {
     margin: 0 0 1rem;
   }
-}
-
-.about-lede .rig {
-  display: inline-block;
-  font-family: $font-family-monospace;
-  font-size: $fs-mono;
-  letter-spacing: 0.02em;
-  color: var(--muted);
-  border-top: 1px solid var(--rule);
-  padding-top: 0.5rem;
 }
 
 .elsewhere {
